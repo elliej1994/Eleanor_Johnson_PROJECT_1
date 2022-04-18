@@ -28,14 +28,14 @@ You will be creating a REST API for an expense reimbursement system. The system 
 ## Routes
 
 ### Employee Routes
-- POST /employees 
+- POST /employee 
   - returns a 201
-- GET /employees
-- GET /employees/120
+- GET /employee
+- GET /employee/120
   - returns a 404 if employee not found
-- PUT /employees/150
+- PUT /employee/150
   - returns a 404 if employee not found
-- DELETE /employees/190
+- DELETE /employee/190
   - returns a 404 if employee not found
 
 
@@ -57,9 +57,9 @@ You will be creating a REST API for an expense reimbursement system. The system 
   - returns a 404 if car not found
 
 It is common for REST routes to be nested 
-- GET /employees/120/expenses
+- GET /employee/120/expenses
   - returns expenses for employee 120
-- POST /employees/120/expenses
+- POST /employee/120/expenses
   - adds an expense to employee 120
 
 ## ORM BONUS
@@ -142,9 +142,9 @@ DELETE /expenses/19
 returns a 404 if car not found
 It is common for REST routes to be nested
 
-GET /employees/120/expenses
+GET /employee/120/expenses
 returns expenses for employee 120
-POST /employees/120/expenses
+POST /employee/120/expenses
 adds an expense to employee 120
 ORM BONUS
 DO LAST

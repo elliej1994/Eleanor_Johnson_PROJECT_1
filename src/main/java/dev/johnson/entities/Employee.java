@@ -1,6 +1,6 @@
 package dev.johnson.entities;
 
-public class Employees {
+public class Employee {
 
     private int eId;
     private String fName;
@@ -11,9 +11,9 @@ public class Employees {
     private int salary;
 
 
-    public Employees (){}
+    public Employee(){}
 
-    public Employees(int eId, String fName, String lName, String phNum, String dpt, String title, int salary) {
+    public Employee(int eId, String fName, String lName, String phNum, String dpt, String title, int salary) {
         this.eId = eId;
         this.fName = fName;
         this.lName = lName;

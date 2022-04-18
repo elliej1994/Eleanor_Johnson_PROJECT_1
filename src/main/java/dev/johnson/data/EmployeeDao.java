@@ -1,9 +1,9 @@
 package dev.johnson.data;
 
-import dev.johnson.entities.Employees;
+import dev.johnson.entities.Employee;
 
-public interface EmployeesDao {
-public Employees createEmployee(Employees employee);
+public interface EmployeeDao {
+public Employee createEmployee(Employee employee);
 
 /*
 public Employees getEmployee(int eId);

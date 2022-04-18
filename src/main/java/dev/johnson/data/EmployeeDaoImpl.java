@@ -1,15 +1,15 @@
 package dev.johnson.data;
 
-import dev.johnson.entities.Employees;
+import dev.johnson.entities.Employee;
 import dev.johnson.utilities.ConnectionUtil;
 
 import java.sql.*;
 
-public class EmployeesDaoImpl implements EmployeesDao{
+public class EmployeeDaoImpl implements EmployeeDao {
 
 
     @Override
-    public Employees createEmployee(Employees employee) {
+    public Employee createEmployee(Employee employee) {
     try {
     Connection conn = ConnectionUtil.createConnection();
     String sql = "insert into employees (fname,lname,ph_num,dpt,title,salary) values(default,?,?,?,?,?,?)";
