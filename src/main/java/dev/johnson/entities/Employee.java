@@ -1,26 +1,21 @@
 package dev.johnson.entities;
 
+
+
 public class Employee {
+
 
     private int eId;
     private String fName;
     private String lName;
-    private String phNum;
     private String dpt;
-    private String title;
-    private int salary;
-
 
     public Employee(){}
-
-    public Employee(int eId, String fName, String lName, String phNum, String dpt, String title, int salary) {
+    public Employee(int eId, String fName, String lName, String dpt) {
         this.eId = eId;
         this.fName = fName;
         this.lName = lName;
-        this.phNum = phNum;
         this.dpt = dpt;
-        this.title = title;
-        this.salary = salary;
     }
 
     public int geteId() {
@@ -47,14 +42,6 @@ public class Employee {
         this.lName = lName;
     }
 
-    public String getPhNum() {
-        return phNum;
-    }
-
-    public void setPhNum(String phNum) {
-        this.phNum = phNum;
-    }
-
     public String getDpt() {
         return dpt;
     }
@@ -63,32 +50,13 @@ public class Employee {
         this.dpt = dpt;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getSalary() {
-        return salary;
-    }
-
-    public void setSalary(int salary) {
-        this.salary = salary;
-    }
-
     @Override
     public String toString() {
-        return "Employees{" +
+        return "Employee{" +
                 "eId=" + eId +
                 ", fName='" + fName + '\'' +
                 ", lName='" + lName + '\'' +
-                ", phNum='" + phNum + '\'' +
                 ", dpt='" + dpt + '\'' +
-                ", title='" + title + '\'' +
-                ", salary=" + salary +
                 '}';
     }
 }

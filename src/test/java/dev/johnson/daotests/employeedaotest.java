@@ -15,7 +15,7 @@ public class employeedaotest {
     @Order(1)
     public void create_account_test(){
 
-        Employee sample = new Employee(0,"Jane","Doe","444-444-4444","Sales","Regional Lead",50);
+        Employee sample = new Employee(0,"Ja","Moe","Sales");
         Employee saved = employeeDao.createEmployee(sample);
         employeedaotest.testEmployee = saved;
         Assertions.assertNotEquals(0,saved.geteId());
