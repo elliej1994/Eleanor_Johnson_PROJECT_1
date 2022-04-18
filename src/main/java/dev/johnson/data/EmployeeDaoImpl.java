@@ -34,4 +34,32 @@ public class EmployeeDaoImpl implements EmployeeDao {
             }
         return null;
     }
+
+    @Override
+    public Employee getEmployee(int eId) {
+
+
+
+        try {
+            Connection conn = ConnectionUtil.createConnection();
+            String sql = "select * from employees where eid = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1,eId);
+            ResultSet rs = ps.executeQuery();
+            //look into exceptions here
+            rs.next();
+            Employee employee = new Employee();
+            employee.seteId(rs.getInt("eid"));
+            employee.setfName(rs.getString("fname"));
+            employee.setlName(rs.getString("lname"));
+            employee.setDpt(rs.getString("dpt"));
+            return employee;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        return null;
+    }
 }

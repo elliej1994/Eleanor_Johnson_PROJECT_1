@@ -13,7 +13,7 @@ public class employeedaotest {
 
     @Test
     @Order(1)
-    public void create_account_test(){
+    public void create_employee_test(){
 
         Employee sample = new Employee(0,"Ja","Moe","Sales");
         Employee saved = employeeDao.createEmployee(sample);
@@ -21,5 +21,12 @@ public class employeedaotest {
         Assertions.assertNotEquals(0,saved.geteId());
 
     }
+    @Test
+    @Order(2)
+    public void get_employee_byId_test(){
+        Employee fetchedEmployee = employeeDao.getEmployee(testEmployee.geteId());
+        System.out.println(fetchedEmployee);
+        Assertions.assertEquals(fetchedEmployee.getfName(), testEmployee.getfName());
 
+    }
 }
