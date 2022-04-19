@@ -2,21 +2,19 @@ package dev.johnson.entities;
 
 public class ExpenseRecord {
 
-    private int recordNo;
-    private int eID;
-    private String expenseType;
-    private String item;
-    private double amount;
-    private String status;
+private int recordNo;
+private int eId;
+private String expenseType;
+private double amount;
+private String status;
+
 
 
     public ExpenseRecord(){}
-
-    public ExpenseRecord(int recordNo, int eID, String expenseType, String item, double amount, String status) {
+    public ExpenseRecord(int recordNo, int eId, String expenseType, double amount, String status) {
         this.recordNo = recordNo;
-        this.eID = eID;
+        this.eId = eId;
         this.expenseType = expenseType;
-        this.item = item;
         this.amount = amount;
         this.status = status;
     }
@@ -29,12 +27,12 @@ public class ExpenseRecord {
         this.recordNo = recordNo;
     }
 
-    public int geteID() {
-        return eID;
+    public int geteId() {
+        return eId;
     }
 
-    public void seteID(int eID) {
-        this.eID = eID;
+    public void seteId(int eId) {
+        this.eId = eId;
     }
 
     public String getExpenseType() {
@@ -43,14 +41,6 @@ public class ExpenseRecord {
 
     public void setExpenseType(String expenseType) {
         this.expenseType = expenseType;
-    }
-
-    public String getItem() {
-        return item;
-    }
-
-    public void setItem(String item) {
-        this.item = item;
     }
 
     public double getAmount() {
@@ -71,15 +61,12 @@ public class ExpenseRecord {
 
     @Override
     public String toString() {
-        return "expenseRecord{" +
+        return "ExpenseRecord{" +
                 "recordNo=" + recordNo +
-                ", eID=" + eID +
+                ", eId=" + eId +
                 ", expenseType='" + expenseType + '\'' +
-                ", item='" + item + '\'' +
                 ", amount=" + amount +
                 ", status='" + status + '\'' +
                 '}';
     }
-
-
 }

@@ -2,8 +2,12 @@ package dev.johnson.data;
 
 import dev.johnson.entities.Employee;
 import dev.johnson.utilities.ConnectionUtil;
+import dev.johnson.utilities.LogLevel;
+import dev.johnson.utilities.Logger;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmployeeDaoImpl implements EmployeeDao {
 
@@ -31,6 +35,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     }catch(SQLException e){
             e.printStackTrace();
+            Logger.log(e.getMessage(), LogLevel.ERROR);
             }
         return null;
     }
@@ -57,9 +62,34 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            Logger.log(e.getMessage(),LogLevel.ERROR);
         }
 
 
         return null;
+    }
+
+    @Override
+    public List<Employee> getAllEmployees() {
+        try {
+            Connection conn = ConnectionUtil.createConnection();
+            String sql = "select * from employees";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            List<Employee> employeeList = new ArrayList<>();
+            while(rs.next()){
+                Employee employee = new Employee();
+                employee.seteId(rs.getInt("eid"));
+                employee.setfName(rs.getString("fname"));
+                employee.setlName(rs.getString("lname"));
+                employee.setDpt(rs.getString("dpt"));
+                employeeList.add(employee);
+            }
+                return employeeList;
+        }catch(SQLException e){
+                e.printStackTrace();
+                return null;
+            }
     }
 }
