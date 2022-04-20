@@ -3,6 +3,8 @@ package dev.johnson.service;
 import dev.johnson.data.EmployeeDao;
 import dev.johnson.data.EmployeeDaoImpl;
 import dev.johnson.entities.Employee;
+import dev.johnson.utilities.LogLevel;
+import dev.johnson.utilities.Logger;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ private EmployeeDao employeeDao;
     @Override
     public Employee registerEmployee(Employee employees){
         Employee employee = this.employeeDao.createEmployee(employees);
+        Logger.log("The employee with eId "+ employee.geteId()+" was created.", LogLevel.INFO);
         return employee;
     }
 
@@ -28,5 +31,16 @@ private EmployeeDao employeeDao;
     @Override
     public Employee retrieveEmployeeById(int eId) {
         return this.employeeDao.getEmployee(eId);
+    }
+
+    @Override
+    public Employee replaceEmployee(Employee employee) {
+        Logger.log("The employee information was updated",LogLevel.INFO);
+        return this.employeeDao.updateEmployee(employee);
+    }
+
+    @Override
+    public boolean destroyEmployee(int eId) {
+        return this.employeeDao.deleteEmployee(eId);
     }
 }

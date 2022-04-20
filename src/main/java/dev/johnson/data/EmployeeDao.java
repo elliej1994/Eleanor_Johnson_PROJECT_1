@@ -8,6 +8,8 @@ public interface EmployeeDao {
     public Employee createEmployee(Employee employee);
     public Employee getEmployee(int eId);
     List<Employee> getAllEmployees();
+    public Employee updateEmployee(Employee employee);
+    public boolean deleteEmployee(int eId);
 
 /*public Employee updateEmployee(Employee employee);*/
 

@@ -1,5 +1,7 @@
 package dev.johnson.entities;
 
+import java.util.Objects;
+
 public class ExpenseRecord {
 
 private int recordNo;
@@ -68,5 +70,18 @@ private String status;
                 ", amount=" + amount +
                 ", status='" + status + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExpenseRecord that = (ExpenseRecord) o;
+        return recordNo == that.recordNo && eId == that.eId && Double.compare(that.amount, amount) == 0 && Objects.equals(expenseType, that.expenseType) && Objects.equals(status, that.status);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(recordNo, eId, expenseType, amount, status);
     }
 }

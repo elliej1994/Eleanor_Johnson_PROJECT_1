@@ -2,6 +2,7 @@ package dev.johnson.data;
 
 import dev.johnson.entities.Employee;
 import dev.johnson.entities.ExpenseRecord;
+import dev.johnson.exceptions.ResourceNotFound;
 import dev.johnson.utilities.ConnectionUtil;
 import dev.johnson.utilities.LogLevel;
 import dev.johnson.utilities.Logger;
@@ -50,10 +51,10 @@ public class ExpenseRecordDaoImpl implements ExpenseRecordDao{
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1,recordNo);
             ResultSet rs = ps.executeQuery();
-            //look into exceptions here
+
             rs.next();
             ExpenseRecord expenseRecord = new ExpenseRecord();
-            expenseRecord.setRecordNo(rs.getInt("recordNo"));
+            expenseRecord.setRecordNo(rs.getInt("recordno"));
             expenseRecord.seteId(rs.getInt("eid"));
             expenseRecord.setExpenseType(rs.getString("expense_type"));
             expenseRecord.setAmount(rs.getDouble("amount"));
@@ -92,5 +93,32 @@ public class ExpenseRecordDaoImpl implements ExpenseRecordDao{
         }
         return null;
     }
+
+    @Override
+    public ExpenseRecord updateExpenseRecord(ExpenseRecord expenseRecord) {
+
+
+        try {
+            Connection conn = ConnectionUtil.createConnection();
+            String sql = "update expense_records set eid=?, expense_type=?, amount=?, status=? where recordno=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1,expenseRecord.geteId());
+            ps.setString(2, expenseRecord.getExpenseType());
+            ps.setDouble(3,expenseRecord.getAmount());
+            ps.setString(4, expenseRecord.getStatus());
+            ps.setInt(5,expenseRecord.getRecordNo());
+
+            int rowsUpdated =ps.executeUpdate();
+
+            if(rowsUpdated == 0){
+                throw new ResourceNotFound(expenseRecord.getRecordNo());
+            }
+            return expenseRecord;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
 

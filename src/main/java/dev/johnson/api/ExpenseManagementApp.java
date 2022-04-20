@@ -38,7 +38,7 @@ public class ExpenseManagementApp {
 *
 *
  */
-        app.post("/employees", context -> {
+        app.post("/employee", context -> {
            String body = context.body();
            Employee employee = gson.fromJson(body, Employee.class);
             Employee employee1 = employeeService.registerEmployee(employee);
@@ -48,13 +48,13 @@ public class ExpenseManagementApp {
         });
 
 
-        app.get("/employees", context -> {
+        app.get("/employee", context -> {
             List<Employee> employeeList = employeeService.employeeList();
             String employeeListJSON = gson.toJson(employeeList);
             context.result(employeeListJSON);
         });
 
-        app.get("/employees/{eid}", context -> {
+        app.get("/employee/{eid}", context -> {
         int eId = Integer.parseInt(context.pathParam("eid"));
             try {
                 String employeeJSON = gson.toJson(employeeService.retrieveEmployeeById(eId));
@@ -63,9 +63,29 @@ public class ExpenseManagementApp {
             }catch(ResourceNotFound e){
                 context.status(404);
                 context.result("The employee with that id was not found.");
-
             }
+        });
 
+        app.put("/employee/{eid}", context -> {
+            int eId = Integer.parseInt(context.pathParam("eid"));
+            String body = context.body();
+            Employee employee = gson.fromJson(body,Employee.class);
+            employee.seteId(eId);
+            employeeService.replaceEmployee(employee);
+            context.result("Employee replaced");
+        });
+
+        app.delete("/employee/{eid}", context -> {
+            int eId = Integer.parseInt(context.pathParam("eid"));
+            boolean result = employeeService.destroyEmployee(eId);
+            if(result){
+                context.status(404);
+                context.result("That employee does not exist");
+                Logger.log("Attempted to delete nonexistant employee with eId "+ eId,LogLevel.INFO);
+
+            }else{
+               context.result("The employee with that id has been deleted");
+            }
 
 
         });
@@ -82,24 +102,62 @@ public class ExpenseManagementApp {
 *
  */
 
-        app.post("/expenserecords", context -> {
+        app.post("/expenses", context -> {
             String body = context.body();
             ExpenseRecord expenseRecord = gson.fromJson(body,ExpenseRecord.class);
             ExpenseRecord expenseRecord1 = expenseRecordService.registerExpenseRecord(expenseRecord);
             context.status(201);
             String expenseRecordJSON = gson.toJson(expenseRecord1);
             context.result(expenseRecordJSON);
-
-
         });
 
-        app.get("/expenserecords",context -> {
+        app.get("/expenses",context -> {
+            String status = context.queryParam("status");
             List<ExpenseRecord> expenseRecordList = expenseRecordService.expenseList();
-            String expenseRecordsListJSON = gson.toJson(expenseRecordList);
-            context.result(expenseRecordsListJSON);
-
-
+            if(status==null){
+                context.result(gson.toJson(expenseRecordList));
+            }else{
+                List<ExpenseRecord> requestedStatus = new ArrayList<>();
+                for(ExpenseRecord expenseRecord : expenseRecordList){
+                    if(expenseRecord.getStatus().equals(status)){
+                        requestedStatus.add(expenseRecord);
+                    }
+                }
+                String expenseRecordsListJSON = gson.toJson(requestedStatus);
+                context.result(expenseRecordsListJSON);
+            }
         });
+
+        app.get("/expenses/{recordno}", context -> {
+            int recordNo = Integer.parseInt(context.pathParam("recordno"));
+            try {
+                String expensesJSON = gson.toJson(expenseRecordService.retrieveExpensesByNo(recordNo));
+                context.result(expensesJSON);
+            }catch(ResourceNotFound e){
+                context.status(404);
+                context.result("The expense record with that record number was not found.");
+            }
+        });
+
+        app.put("/expenses/{recordno}",context -> {
+            int recordNo = Integer.parseInt(context.pathParam("recordno"));
+            String body = context.body();
+            ExpenseRecord expenseRecord = gson.fromJson(body,ExpenseRecord.class);
+            expenseRecord.setRecordNo(recordNo);
+            expenseRecordService.replaceExpenseRecord(expenseRecord);
+            context.result("Expense record replaced");
+        });
+
+
+
+      /*  app.put("/employee/{eid}", context -> {
+            int eId = Integer.parseInt(context.pathParam("eid"));
+            String body = context.body();
+            Employee employee = gson.fromJson(body,Employee.class);
+            employee.seteId(eId);
+            employeeService.replaceEmployee(employee);
+            context.result("Employee replaced");
+        });*/
 
     app.start(8080);
     }

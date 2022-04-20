@@ -1,6 +1,7 @@
 package dev.johnson.data;
 
 import dev.johnson.entities.Employee;
+import dev.johnson.exceptions.ResourceNotFound;
 import dev.johnson.utilities.ConnectionUtil;
 import dev.johnson.utilities.LogLevel;
 import dev.johnson.utilities.Logger;
@@ -91,5 +92,46 @@ public class EmployeeDaoImpl implements EmployeeDao {
                 e.printStackTrace();
                 return null;
             }
+    }
+
+    @Override
+    public Employee updateEmployee(Employee employee) {
+
+        try {
+            Connection conn = ConnectionUtil.createConnection();
+            String sql = "update employees set fname=?, lname=?, dpt=? where eid=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, employee.getfName());
+            ps.setString(2, employee.getlName());
+            ps.setString(3, employee.getDpt());
+            ps.setInt(4,employee.geteId());
+            int rowsUpdated = ps.executeUpdate();
+
+            if(rowsUpdated == 0){
+                throw new ResourceNotFound(employee.geteId());
+            }
+            return employee;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public boolean deleteEmployee(int eId) {
+
+        try{
+            Connection conn = ConnectionUtil.createConnection();
+            String sql = "delete from employees where eid=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1,eId);
+            ps.execute();
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;
+
+        }
+
     }
 }

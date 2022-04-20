@@ -10,4 +10,6 @@ public interface ExpenseRecordDao {
 
     public ExpenseRecord getExpenseRecord(int recordNo);
     List<ExpenseRecord> listExpenseRecord();
+    public ExpenseRecord updateExpenseRecord(ExpenseRecord expenseRecord);
+
 }

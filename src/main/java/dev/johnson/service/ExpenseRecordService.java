@@ -8,4 +8,6 @@ public interface ExpenseRecordService {
 
     public ExpenseRecord registerExpenseRecord (ExpenseRecord expenseRecord);
     List<ExpenseRecord> expenseList();
+   public ExpenseRecord retrieveExpensesByNo(int recordNo);
+   public ExpenseRecord replaceExpenseRecord(ExpenseRecord expenseRecord);
 }
