@@ -27,6 +27,16 @@ public class employeedaotest {
         Employee fetchedEmployee = employeeDao.getEmployee(testEmployee.geteId());
         System.out.println(fetchedEmployee);
         Assertions.assertEquals(fetchedEmployee.getfName(), testEmployee.getfName());
-
     }
+   @Test
+    @Order(3)
+    public void update_employee_test(){
+        employeedaotest.testEmployee.setfName("Lorraine");
+        employeeDao.updateEmployee(testEmployee);
+        Employee fetchedEmployee = employeeDao.getEmployee(testEmployee.geteId());
+       System.out.println(fetchedEmployee);
+        Assertions.assertEquals(testEmployee.getfName(),fetchedEmployee.getfName());
+   }
+
+
 }

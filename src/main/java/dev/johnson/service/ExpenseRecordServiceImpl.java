@@ -33,9 +33,31 @@ public class ExpenseRecordServiceImpl implements  ExpenseRecordService{
     }
 
     @Override
+    public ExpenseRecord retrieveExpenseByeId(int eId) {
+        return this.expenseRecordDao.getExpenseRecordeId(eId);
+    }
+
+    @Override
     public ExpenseRecord replaceExpenseRecord(ExpenseRecord expenseRecord) {
         Logger.log("The record "+ expenseRecord.getRecordNo() + " was updated", LogLevel.INFO);
         return this.expenseRecordDao.updateExpenseRecord(expenseRecord);
+    }
+
+    @Override
+    public ExpenseRecord approveExpense(ExpenseRecord expenseRecord) {
+        expenseRecord.setStatus("Approved");
+        return this.expenseRecordDao.updateExpenseRecord(expenseRecord);
+    }
+
+    @Override
+    public ExpenseRecord denyExpense(ExpenseRecord expenseRecord) {
+        expenseRecord.setStatus("Denied");
+        return this.expenseRecordDao.updateExpenseRecord(expenseRecord);
+    }
+
+    @Override
+    public boolean destroyExpense(int recordNo) {
+        return this.expenseRecordDao.deleteExpenseRecord(recordNo);
     }
 
 

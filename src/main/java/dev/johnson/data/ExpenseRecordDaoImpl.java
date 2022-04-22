@@ -42,6 +42,8 @@ public class ExpenseRecordDaoImpl implements ExpenseRecordDao{
 
     }
 
+
+
     @Override
     public ExpenseRecord getExpenseRecord(int recordNo) {
 
@@ -50,6 +52,31 @@ public class ExpenseRecordDaoImpl implements ExpenseRecordDao{
             String sql = "select * from expense_records where recordno = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1,recordNo);
+            ResultSet rs = ps.executeQuery();
+
+            rs.next();
+            ExpenseRecord expenseRecord = new ExpenseRecord();
+            expenseRecord.setRecordNo(rs.getInt("recordno"));
+            expenseRecord.seteId(rs.getInt("eid"));
+            expenseRecord.setExpenseType(rs.getString("expense_type"));
+            expenseRecord.setAmount(rs.getDouble("amount"));
+            expenseRecord.setStatus(rs.getString("status"));
+            return expenseRecord;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.log(e.getMessage(),LogLevel.ERROR);
+        }
+        return null;
+    }
+
+    @Override
+    public ExpenseRecord getExpenseRecordeId(int eId) {
+        try {
+            Connection conn = ConnectionUtil.createConnection();
+            String sql = "select * from expense_records where eid = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1,eId);
             ResultSet rs = ps.executeQuery();
 
             rs.next();
@@ -96,8 +123,6 @@ public class ExpenseRecordDaoImpl implements ExpenseRecordDao{
 
     @Override
     public ExpenseRecord updateExpenseRecord(ExpenseRecord expenseRecord) {
-
-
         try {
             Connection conn = ConnectionUtil.createConnection();
             String sql = "update expense_records set eid=?, expense_type=?, amount=?, status=? where recordno=?";
@@ -116,9 +141,27 @@ public class ExpenseRecordDaoImpl implements ExpenseRecordDao{
             return expenseRecord;
         } catch (SQLException e) {
             e.printStackTrace();
+            Logger.log(e.getMessage(),LogLevel.ERROR);
             return null;
         }
     }
 
+    @Override
+    public boolean deleteExpenseRecord(int recordNo) {
+        try{
+            Connection conn = ConnectionUtil.createConnection();
+            String sql = "delete from expense_records where recordno=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1,recordNo);
+            ps.execute();
+            return true;
+        }catch(SQLException e){
+            Logger.log(e.getMessage(),LogLevel.ERROR);
+            e.printStackTrace();
+            return false;
+
+        }
+
+    }
 }
 

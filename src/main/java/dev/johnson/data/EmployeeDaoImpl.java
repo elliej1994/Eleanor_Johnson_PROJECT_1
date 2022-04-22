@@ -43,9 +43,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public Employee getEmployee(int eId) {
-
-
-
         try {
             Connection conn = ConnectionUtil.createConnection();
             String sql = "select * from employees where eid = ?";
@@ -89,6 +86,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
             }
                 return employeeList;
         }catch(SQLException e){
+            Logger.log(e.getMessage(), LogLevel.ERROR);
                 e.printStackTrace();
                 return null;
             }
@@ -112,6 +110,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
             }
             return employee;
         }catch(SQLException e){
+            Logger.log(e.getMessage(), LogLevel.ERROR);
             e.printStackTrace();
             return null;
         }
@@ -128,6 +127,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
             ps.execute();
             return true;
         }catch(SQLException e){
+            Logger.log(e.getMessage(), LogLevel.ERROR);
             e.printStackTrace();
             return false;
 

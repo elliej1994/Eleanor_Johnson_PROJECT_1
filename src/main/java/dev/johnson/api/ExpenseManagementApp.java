@@ -18,6 +18,7 @@ import io.javalin.Javalin;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ExpenseManagementApp {
 //todo inst list of records
@@ -45,6 +46,7 @@ public class ExpenseManagementApp {
             context.status(201);
             String employeeJson = gson.toJson(employee1);
             context.result(employeeJson);
+
         });
 
 
@@ -79,16 +81,14 @@ public class ExpenseManagementApp {
             int eId = Integer.parseInt(context.pathParam("eid"));
             boolean result = employeeService.destroyEmployee(eId);
             if(result){
+                context.result("The employee with that id has been deleted");
+            }else{
                 context.status(404);
                 context.result("That employee does not exist");
                 Logger.log("Attempted to delete nonexistant employee with eId "+ eId,LogLevel.INFO);
-
-            }else{
-               context.result("The employee with that id has been deleted");
             }
-
-
         });
+
 
 
 
@@ -105,6 +105,7 @@ public class ExpenseManagementApp {
         app.post("/expenses", context -> {
             String body = context.body();
             ExpenseRecord expenseRecord = gson.fromJson(body,ExpenseRecord.class);
+            expenseRecord.setStatus("Pending");
             ExpenseRecord expenseRecord1 = expenseRecordService.registerExpenseRecord(expenseRecord);
             context.status(201);
             String expenseRecordJSON = gson.toJson(expenseRecord1);
@@ -148,16 +149,90 @@ public class ExpenseManagementApp {
             context.result("Expense record replaced");
         });
 
+        app.patch("/expenses/{recordno}/approve",context -> {
+            try {
+                int recordNo = Integer.parseInt(context.pathParam("recordno"));
+                ExpenseRecord expenseRecord = expenseRecordService.retrieveExpensesByNo(recordNo);
+                if(Objects.equals(expenseRecord.getStatus(), "Pending")){
+                    expenseRecordService.approveExpense(expenseRecord);
+                    context.result("The expense has been approved");
+                    context.status(200);
+                }else {
+                    context.result("Cannot update a finalized expense.");
+                }
+            }catch(ResourceNotFound e){
+                context.status(404);
+                context.result(e.getMessage());
+            }
+        });
 
 
-      /*  app.put("/employee/{eid}", context -> {
+
+        app.patch("/expenses/{recordno}/deny",context -> {
+            try {
+                int recordNo = Integer.parseInt(context.pathParam("recordno"));
+                ExpenseRecord expenseRecord = expenseRecordService.retrieveExpensesByNo(recordNo);
+
+
+                expenseRecordService.denyExpense(expenseRecord);
+                context.result("The expense has been denied");
+                context.status(200);
+            }catch(ResourceNotFound e){
+                context.result(e.getMessage());
+                context.status(404);
+
+            }
+        });
+        app.delete("/expenses/{recordno}", context -> {
+            int recordNo = Integer.parseInt(context.pathParam("recordno"));
+            ExpenseRecord expenseRecord = expenseRecordService.retrieveExpensesByNo(recordNo);
+            if(expenseRecord.getStatus()=="Pending") {
+                expenseRecordService.destroyExpense(recordNo);
+                context.status(201);
+                context.result("Expense deleted");
+            } else context.status(400);
+            context.result("Cannot delete a finalized record");
+
+         /*   if( !result ){
+                context.status(404);
+                context.result("That expense record does not exist");
+                Logger.log("Attempted to delete nonexistant expense with recordno "+ recordNo,LogLevel.INFO);
+            }else{
+                context.result("The expense with that id has been deleted");
+            }*/
+        });
+
+
+        app.get("/employee/{eid}/expenses",context -> {
             int eId = Integer.parseInt(context.pathParam("eid"));
-            String body = context.body();
-            Employee employee = gson.fromJson(body,Employee.class);
-            employee.seteId(eId);
-            employeeService.replaceEmployee(employee);
-            context.result("Employee replaced");
-        });*/
+            try{
+                String employeeJSON = gson.toJson(employeeService.retrieveEmployeeById(eId));
+                String expensesJSON = gson.toJson(expenseRecordService.retrieveExpenseByeId(eId));
+                context.result(expensesJSON + employeeJSON);
+            }catch(ResourceNotFound e){
+               context.status(404);
+            }
+        });
+
+        app.post("/employee/{eid}/expenses", context -> {
+            int eId = Integer.parseInt(context.pathParam("eid"));
+              String body = context.body();
+              ExpenseRecord expenseRecord = gson.fromJson(body, ExpenseRecord.class);
+              expenseRecord.seteId(eId);
+              if(expenseRecord.getAmount() <0 )
+              {
+                  context.status(400);
+                  context.result("Cannot create a negative expense "+ expenseRecord);
+
+              }else{
+                  ExpenseRecord expenseRecord2 = expenseRecordService.registerExpenseRecord(expenseRecord);
+                  context.status(201);
+                  String expenseRecordJSON = gson.toJson(expenseRecord2);
+                  context.result(expenseRecordJSON);
+                  context.result("Created a new expense");
+              }
+
+        });
 
     app.start(8080);
     }
