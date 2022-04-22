@@ -43,4 +43,11 @@ private EmployeeDao employeeDao;
     public boolean destroyEmployee(int eId) {
         return this.employeeDao.deleteEmployee(eId);
     }
+
+  /*  @Override
+    public boolean canDelete(int eId) {
+    List<ExpenseRecordService>
+
+        return false;
+    }*/
 }

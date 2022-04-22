@@ -11,7 +11,7 @@ public interface EmployeeService {
     public Employee retrieveEmployeeById(int eId);
     public Employee replaceEmployee(Employee employee);
     public boolean destroyEmployee(int eId);
-
+/*    public boolean canDelete(int eId);*/
 
 
 
