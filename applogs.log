@@ -95,3 +95,9 @@ INFO The employee with eId 1 was created. Fri Apr 22 15:03:17 EDT 2022
 INFO The employee with eId 2 was created. Fri Apr 22 15:04:01 EDT 2022
 INFO The employee with eId 3 was created. Fri Apr 22 15:04:38 EDT 2022
 INFO The employee with eId 4 was created. Fri Apr 22 15:05:50 EDT 2022
+INFO The employee with eId 5 was created. Mon Apr 25 10:52:21 EDT 2022
+ERROR ERROR: insert or update on table "expense_records" violates foreign key constraint "fk_employees"
+  Detail: Key (eid)=(1) is not present in table "employees". Mon Apr 25 10:52:36 EDT 2022
+INFO The employee with eId 6 was created. Mon Apr 25 10:55:19 EDT 2022
+INFO The employee with eId 7 was created. Mon Apr 25 10:56:21 EDT 2022
+INFO The employee with eId 1 was created. Mon Apr 25 12:07:24 EDT 2022

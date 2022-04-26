@@ -37,16 +37,15 @@ public class ExpenseManagementApp {
 *
 * employee routes
 *
-*
+*pluralizeeee
  */
-        app.post("/employee", context -> {
+        app.post("/employees", context -> {
            String body = context.body();
            Employee employee = gson.fromJson(body, Employee.class);
             Employee employee1 = employeeService.registerEmployee(employee);
             context.status(201);
             String employeeJson = gson.toJson(employee1);
             context.result(employeeJson);
-
         });
 
 
@@ -80,19 +79,20 @@ public class ExpenseManagementApp {
         app.delete("/employee/{eid}", context -> {
             int eId = Integer.parseInt(context.pathParam("eid"));
             List<ExpenseRecord> expenseRecordList = expenseRecordService.expenseList();
-               for(ExpenseRecord expenseRecord :expenseRecordList){
-                   if(expenseRecord.geteId()==eId){
+               for(ExpenseRecord expenseRecord :expenseRecordList) {
+                   if (expenseRecord.geteId() == eId) {
                        context.result("Cannot delete employees with any expense records");
+                       context.status(401);
+                   } else {
+                       boolean result = employeeService.destroyEmployee(eId);
+                       if (result) {
+                           context.result("The employee with that id has been deleted");
+                       } else {
+                           context.status(404);
+                           context.result("That employee does not exist");
+                       }
                    }
                }
-               boolean result = employeeService.destroyEmployee(eId);
-            if(result){
-                context.result("The employee with that id has been deleted");
-            }else{
-                context.status(404);
-                context.result("That employee does not exist");
-
-            }
         });
 
 
@@ -239,7 +239,10 @@ public class ExpenseManagementApp {
               }
         });
 
+
     app.start(8080);
+        System.out.println(Thread.currentThread());
+
     }
 
 }
