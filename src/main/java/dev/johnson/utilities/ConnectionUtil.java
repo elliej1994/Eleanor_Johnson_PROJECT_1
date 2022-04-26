@@ -12,7 +12,7 @@ public class ConnectionUtil {
     Connection conn;
         try {
 
-            conn = DriverManager.getConnection("jdbc:postgresql://johnson-db.cbn3pfkjnp4z.us-east-1.rds.amazonaws.com/project1db?user=postgres&password=!pinkkeyboardwithRBG?");
+            conn = DriverManager.getConnection(System.getenv("PROJECTDB"));
 
         } catch (SQLException e) {;
             throw new Error("bad connection am I going through a tunnel?",e);
@@ -21,6 +21,4 @@ public class ConnectionUtil {
     }
 }
 
-/*
-jdbc:postgresql://johnson-db.cbn3pfkjnp4z.us-east-1.rds.amazonaws.com/project1db?user=postgres&password=!pinkkeyboardwithRBG?
-*/
+
