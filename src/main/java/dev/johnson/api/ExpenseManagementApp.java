@@ -92,23 +92,22 @@ public class ExpenseManagementApp {
         app.delete("/employee/{eid}", context -> {
             int eId = Integer.parseInt(context.pathParam("eid"));
             List<Expense> eList = expenseService.expenseList();
+            Employee retrievedEmployee = employeeService.retrieveEmployeeById(eId);
                for(Expense expense : eList) {
                    if (expense.geteId() == eId) {
                        context.result("Cannot delete employees with any expense records");
                        context.status(401);
                        return;
-                   } else {
+                   } if(retrievedEmployee!=null) {
 
-                       boolean result = employeeService.destroyEmployee(eId);
-
-                       if (result) {
-                           context.result("The employee with that id has been deleted");
+                       employeeService.destroyEmployee(eId);
+                       context.result("The employee with that id has been deleted");
                        } else {
                            context.status(404);
                            context.result("That employee does not exist");
                        }
                    }
-               }
+
         });
 
 
@@ -230,7 +229,7 @@ public class ExpenseManagementApp {
                   context.status(400);
                   context.result("Cannot delete a finalized record");
               }
-           }else if(expense==null){
+           }else {
                context.status(404);
                context.result("There is no expense with that record number");
            }
