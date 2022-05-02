@@ -24,6 +24,9 @@ public class EmployeedaoTest {
     @Test
     @Order(2)
     public void get_employee_byId_test(){
+        Employee sample = new Employee(0,"Ja","Moe","Sales");
+        Employee saved = employeeDao.createEmployee(sample);
+        EmployeedaoTest.testEmployee = saved;
         Employee fetchedEmployee = employeeDao.getEmployee(testEmployee.geteId());
         System.out.println(fetchedEmployee);
         Assertions.assertEquals(fetchedEmployee.getfName(), testEmployee.getfName());
@@ -31,9 +34,12 @@ public class EmployeedaoTest {
    @Test
     @Order(3)
     public void update_employee_test(){
+       Employee sample = new Employee(0,"Ja","Moe","Sales");
+       Employee saved = employeeDao.createEmployee(sample);
+       EmployeedaoTest.testEmployee = saved;
         EmployeedaoTest.testEmployee.setfName("Lorraine");
         employeeDao.updateEmployee(testEmployee);
-        Employee fetchedEmployee = employeeDao.getEmployee(testEmployee.geteId());
+       Employee fetchedEmployee = employeeDao.getEmployee(testEmployee.geteId());
        System.out.println(fetchedEmployee);
         Assertions.assertEquals(testEmployee.getfName(),fetchedEmployee.getfName());
    }

@@ -165,15 +165,21 @@ public class ExpenseManagementApp {
         app.put("/expense/{recordno}",context -> {
             int recordNo = Integer.parseInt(context.pathParam("recordno"));
             String body = context.body();
+            Expense retrievedExpense = expenseService.retrieveExpensesByNo(recordNo);
             Expense expense = gson.fromJson(body, Expense.class);
             expense.setRecordNo(recordNo);
-            if(Objects.equals(expense.getStatus(),"Pending")){
-                expenseService.replaceExpense(expense);
-                context.result("Expense record replaced");
-            }else{
-                context.result("Cannot update a finalized expense");
+            if(retrievedExpense!=null) {
+                if (retrievedExpense.getStatus().equals("Pending")) {
+                    expenseService.replaceExpense(expense);
+                    context.result("Expense updated");
+                } else {
+                    context.result("Cannot update finalized expense");
+                    context.status(401);
+                }
+            }else if(retrievedExpense==null){
+                context.status(404);
+                context.result("There is no expense with that record number");
             }
-
         });
 
         app.patch("/expense/{recordno}/approve",context -> {
@@ -217,6 +223,7 @@ public class ExpenseManagementApp {
 
             }
         });
+
         app.delete("/expense/{recordno}", context -> {
             int recordNo = Integer.parseInt(context.pathParam("recordno"));
             Expense expense = expenseService.retrieveExpensesByNo(recordNo);
