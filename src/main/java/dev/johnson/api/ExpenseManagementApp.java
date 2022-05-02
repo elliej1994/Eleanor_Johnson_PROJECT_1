@@ -2,31 +2,31 @@ package dev.johnson.api;
 
 import com.google.gson.Gson;
 import dev.johnson.data.EmployeeDaoImpl;
-import dev.johnson.data.ExpenseRecordDao;
-import dev.johnson.data.ExpenseRecordDaoImpl;
+import dev.johnson.data.ExpenseDaoImpl;
 import dev.johnson.entities.Employee;
-import dev.johnson.entities.ExpenseRecord;
+import dev.johnson.entities.Expense;
 import dev.johnson.exceptions.ResourceNotFound;
 import dev.johnson.service.EmployeeService;
 import dev.johnson.service.EmployeeServiceImpl;
-import dev.johnson.service.ExpenseRecordService;
-import dev.johnson.service.ExpenseRecordServiceImpl;
-import dev.johnson.utilities.LogLevel;
+import dev.johnson.service.ExpenseService;
+import dev.johnson.service.ExpenseServiceImpl;
+import dev.johnson.utilities.ConnectionUtil;
 import dev.johnson.utilities.Logger;
 import io.javalin.Javalin;
 
-import java.sql.SQLException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/*
+An application to keep track of employee reimbursement requests
+*/
 public class ExpenseManagementApp {
-//todo inst list of records
-    //todo inst list of employees
-    static List<Employee> employeeList = new ArrayList<>();
+
     public static Gson gson = new Gson();
     public static EmployeeService employeeService = new EmployeeServiceImpl(new EmployeeDaoImpl());
-    public static ExpenseRecordService expenseRecordService = new ExpenseRecordServiceImpl(new ExpenseRecordDaoImpl());
+    public static ExpenseService expenseService = new ExpenseServiceImpl(new ExpenseDaoImpl());
 
 
     public static void main(String[] args) {
@@ -39,7 +39,19 @@ public class ExpenseManagementApp {
 *
 *pluralizeeee
  */
-        app.post("/employees", context -> {
+
+        app.get("/", context -> {
+            Connection conn = ConnectionUtil.createConnection();
+            if(conn != null){
+                context.status(200);
+                context.result("Application is working");
+            }else{
+                context.status(400);
+                context.result("Application not connecting");
+            }
+        });
+
+        app.post("/employee", context -> {
            String body = context.body();
            Employee employee = gson.fromJson(body, Employee.class);
             Employee employee1 = employeeService.registerEmployee(employee);
@@ -47,6 +59,7 @@ public class ExpenseManagementApp {
             String employeeJson = gson.toJson(employee1);
             context.result(employeeJson);
         });
+
 
 
         app.get("/employee", context -> {
@@ -57,11 +70,11 @@ public class ExpenseManagementApp {
 
         app.get("/employee/{eid}", context -> {
         int eId = Integer.parseInt(context.pathParam("eid"));
-            try {
+        Employee employee = employeeService.retrieveEmployeeById(eId);
+        if(employee!= null){
                 String employeeJSON = gson.toJson(employeeService.retrieveEmployeeById(eId));
-
                 context.result(employeeJSON);
-            }catch(ResourceNotFound e){
+            }else{
                 context.status(404);
                 context.result("The employee with that id was not found.");
             }
@@ -78,13 +91,16 @@ public class ExpenseManagementApp {
 
         app.delete("/employee/{eid}", context -> {
             int eId = Integer.parseInt(context.pathParam("eid"));
-            List<ExpenseRecord> expenseRecordList = expenseRecordService.expenseList();
-               for(ExpenseRecord expenseRecord :expenseRecordList) {
-                   if (expenseRecord.geteId() == eId) {
+            List<Expense> eList = expenseService.expenseList();
+               for(Expense expense : eList) {
+                   if (expense.geteId() == eId) {
                        context.result("Cannot delete employees with any expense records");
                        context.status(401);
+                       return;
                    } else {
+
                        boolean result = employeeService.destroyEmployee(eId);
+
                        if (result) {
                            context.result("The employee with that id has been deleted");
                        } else {
@@ -108,26 +124,26 @@ public class ExpenseManagementApp {
 *
  */
 
-        app.post("/expenses", context -> {
+        app.post("/expense", context -> {
             String body = context.body();
-            ExpenseRecord expenseRecord = gson.fromJson(body,ExpenseRecord.class);
-            expenseRecord.setStatus("Pending");
-            ExpenseRecord expenseRecord1 = expenseRecordService.registerExpenseRecord(expenseRecord);
+            Expense expense = gson.fromJson(body, Expense.class);
+            expense.setStatus("Pending");
+            Expense expense1 = expenseService.registerExpense(expense);
             context.status(201);
-            String expenseRecordJSON = gson.toJson(expenseRecord1);
+            String expenseRecordJSON = gson.toJson(expense1);
             context.result(expenseRecordJSON);
         });
 
-        app.get("/expenses",context -> {
+        app.get("/expense",context -> {
             String status = context.queryParam("status");
-            List<ExpenseRecord> expenseRecordList = expenseRecordService.expenseList();
+            List<Expense> expenseList = expenseService.expenseList();
             if(status==null){
-                context.result(gson.toJson(expenseRecordList));
+                context.result(gson.toJson(expenseList));
             }else{
-                List<ExpenseRecord> requestedStatus = new ArrayList<>();
-                for(ExpenseRecord expenseRecord : expenseRecordList){
-                    if(expenseRecord.getStatus().equals(status)){
-                        requestedStatus.add(expenseRecord);
+                List<Expense> requestedStatus = new ArrayList<>();
+                for(Expense expense : expenseList){
+                    if(expense.getStatus().equals(status)){
+                        requestedStatus.add(expense);
                     }
                 }
                 String expenseRecordsListJSON = gson.toJson(requestedStatus);
@@ -135,24 +151,25 @@ public class ExpenseManagementApp {
             }
         });
 
-        app.get("/expenses/{recordno}", context -> {
+        app.get("/expense/{recordno}", context -> {
             int recordNo = Integer.parseInt(context.pathParam("recordno"));
-            try {
-                String expensesJSON = gson.toJson(expenseRecordService.retrieveExpensesByNo(recordNo));
+            Expense expense = expenseService.retrieveExpensesByNo(recordNo);
+            if(expense!=null) {
+                String expensesJSON = gson.toJson(expenseService.retrieveExpensesByNo(recordNo));
                 context.result(expensesJSON);
-            }catch(ResourceNotFound e){
+            }else{
                 context.status(404);
                 context.result("The expense record with that record number was not found.");
             }
         });
 
-        app.put("/expenses/{recordno}",context -> {
+        app.put("/expense/{recordno}",context -> {
             int recordNo = Integer.parseInt(context.pathParam("recordno"));
             String body = context.body();
-            ExpenseRecord expenseRecord = gson.fromJson(body,ExpenseRecord.class);
-            expenseRecord.setRecordNo(recordNo);
-            if(Objects.equals(expenseRecord.getStatus(),"Pending")){
-                expenseRecordService.replaceExpenseRecord(expenseRecord);
+            Expense expense = gson.fromJson(body, Expense.class);
+            expense.setRecordNo(recordNo);
+            if(Objects.equals(expense.getStatus(),"Pending")){
+                expenseService.replaceExpense(expense);
                 context.result("Expense record replaced");
             }else{
                 context.result("Cannot update a finalized expense");
@@ -160,80 +177,99 @@ public class ExpenseManagementApp {
 
         });
 
-        app.patch("/expenses/{recordno}/approve",context -> {
-            try {
-                int recordNo = Integer.parseInt(context.pathParam("recordno"));
-                ExpenseRecord expenseRecord = expenseRecordService.retrieveExpensesByNo(recordNo);
-                if(Objects.equals(expenseRecord.getStatus(), "Pending")){
-                    expenseRecordService.approveExpense(expenseRecord);
-                    context.result("The expense has been approved");
-                    context.status(200);
-                }else {
-                    context.result("Cannot update a finalized expense.");
+        app.patch("/expense/{recordno}/approve",context -> {
+            int recordNo = Integer.parseInt(context.pathParam("recordno"));
+            Expense expense = expenseService.retrieveExpensesByNo(recordNo);
+            if(expense!=null) {
+
+                    if (Objects.equals(expense.getStatus(), "Pending")) {
+                        expenseService.approveExpense(expense);
+                        context.result("The expense has been approved");
+                        context.status(200);
+                    } else {
+                        context.result("Cannot update a finalized expense.");
+                        context.status(400);
+                    }
+                } else {
+                    context.status(404);
+                    context.result("There is no pending expense with that record number");
                 }
-            }catch(ResourceNotFound e){
-                context.status(404);
-                context.result(e.getMessage());
-            }
+
         });
 
 
 
-        app.patch("/expenses/{recordno}/deny",context -> {
-            try {
+        app.patch("/expense/{recordno}/deny",context -> {
+
                 int recordNo = Integer.parseInt(context.pathParam("recordno"));
-                ExpenseRecord expenseRecord = expenseRecordService.retrieveExpensesByNo(recordNo);
-                if(Objects.equals(expenseRecord.getStatus(),"Pending")){
-                    expenseRecordService.denyExpense(expenseRecord);
+                Expense expense = expenseService.retrieveExpensesByNo(recordNo);
+                if(expense!=null){
+
+                if(Objects.equals(expense.getStatus(),"Pending")){
+                    expenseService.denyExpense(expense);
                     context.result("The expense has been denied");
                     context.status(200);
                 } else{
                     context.result("Cannot update a finalized expense");
                 }
-            }catch(ResourceNotFound e){
-                context.result(e.getMessage());
+            }else{
+                context.result("There is no pending expense with that record number");
                 context.status(404);
 
             }
         });
-        app.delete("/expenses/{recordno}", context -> {
+        app.delete("/expense/{recordno}", context -> {
             int recordNo = Integer.parseInt(context.pathParam("recordno"));
-            ExpenseRecord expenseRecord = expenseRecordService.retrieveExpensesByNo(recordNo);
-            if(expenseRecord.getStatus()=="Pending") {
-                expenseRecordService.destroyExpense(recordNo);
-                context.status(201);
-                context.result("Expense deleted");
-            } else context.status(400);
-            context.result("Cannot delete a finalized record");
-        });
+            Expense expense = expenseService.retrieveExpensesByNo(recordNo);
+           if(expense!=null) {
+              if (Objects.equals(expense.getStatus(), "Pending")) {
+                   expenseService.destroyExpense(recordNo);
+                   context.status(201);
+                   context.result("Expense deleted");
+               } else if(expense.getStatus()!="Pending"){
+                  context.status(400);
+                  context.result("Cannot delete a finalized record");
+              }
+           }else if(expense==null){
+               context.status(404);
+               context.result("There is no expense with that record number");
+           }
+           });
 
 
-        app.get("/employee/{eid}/expenses",context -> {
+        app.get("/employee/{eid}/expense",context -> {
             int eId = Integer.parseInt(context.pathParam("eid"));
+            List<Expense> expenseList = expenseService.expenseList();
+            List<Expense> requestedList = new ArrayList<>();
+            for(Expense expense : expenseList){
+                if(expense.geteId()==eId){
+                    requestedList.add(expense);
+                }
+            }
             try{
                 String employeeJSON = gson.toJson(employeeService.retrieveEmployeeById(eId));
-                String expensesJSON = gson.toJson(expenseRecordService.retrieveExpenseByeId(eId));
+                String expensesJSON = gson.toJson(requestedList);
                 context.result(expensesJSON + employeeJSON);
             }catch(ResourceNotFound e){
                context.status(404);
             }
         });
 
-        app.post("/employee/{eid}/expenses", context -> {
+        app.post("/employee/{eid}/expense", context -> {
             int eId = Integer.parseInt(context.pathParam("eid"));
               String body = context.body();
-              ExpenseRecord expenseRecord = gson.fromJson(body, ExpenseRecord.class);
-              expenseRecord.seteId(eId);
-              expenseRecord.setStatus("Pending");
-              if(expenseRecord.getAmount() <0 )
+              Expense expense = gson.fromJson(body, Expense.class);
+              expense.seteId(eId);
+              expense.setStatus("Pending");
+              if(expense.getAmount() <0 )
               {
                   context.status(400);
-                  context.result("Cannot create a negative expense "+ expenseRecord);
+                  context.result("Cannot create a negative expense "+ expense);
 
               }else{
-                  ExpenseRecord expenseRecord2 = expenseRecordService.registerExpenseRecord(expenseRecord);
+                  Expense expense2 = expenseService.registerExpense(expense);
                   context.status(201);
-                  String expenseRecordJSON = gson.toJson(expenseRecord2);
+                  String expenseRecordJSON = gson.toJson(expense2);
                   context.result(expenseRecordJSON);
                   context.result("Created a new expense");
               }
@@ -241,7 +277,7 @@ public class ExpenseManagementApp {
 
 
     app.start(8080);
-        System.out.println(Thread.currentThread());
+
 
     }
 

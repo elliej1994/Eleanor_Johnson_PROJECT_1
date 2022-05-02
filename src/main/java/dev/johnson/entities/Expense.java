@@ -2,7 +2,7 @@ package dev.johnson.entities;
 
 import java.util.Objects;
 
-public class ExpenseRecord {
+public class Expense {
 
 private int recordNo;
 private int eId;
@@ -12,8 +12,8 @@ private String status;
 
 
 
-    public ExpenseRecord(){}
-    public ExpenseRecord(int recordNo, int eId, String expenseType, double amount, String status) {
+    public Expense(){}
+    public Expense(int recordNo, int eId, String expenseType, double amount, String status) {
         this.recordNo = recordNo;
         this.eId = eId;
         this.expenseType = expenseType;
@@ -76,7 +76,7 @@ private String status;
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ExpenseRecord that = (ExpenseRecord) o;
+        Expense that = (Expense) o;
         return recordNo == that.recordNo && eId == that.eId && Double.compare(that.amount, amount) == 0 && Objects.equals(expenseType, that.expenseType) && Objects.equals(status, that.status);
     }
 

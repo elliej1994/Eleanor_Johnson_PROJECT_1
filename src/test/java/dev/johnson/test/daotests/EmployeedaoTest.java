@@ -1,4 +1,4 @@
-package dev.johnson.daotests;
+package dev.johnson.test.daotests;
 
 
 import dev.johnson.data.EmployeeDao;
@@ -7,7 +7,7 @@ import dev.johnson.entities.Employee;
 import org.junit.jupiter.api.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class employeedaotest {
+public class EmployeedaoTest {
     static EmployeeDao employeeDao = new EmployeeDaoImpl();
     static Employee testEmployee = null;
 
@@ -17,8 +17,8 @@ public class employeedaotest {
 
         Employee sample = new Employee(0,"Ja","Moe","Sales");
         Employee saved = employeeDao.createEmployee(sample);
-        employeedaotest.testEmployee = saved;
-        Assertions.assertNotEquals(0,saved.geteId());
+        EmployeedaoTest.testEmployee = saved;
+        Assertions.assertEquals(testEmployee.geteId(),saved.geteId());
 
     }
     @Test
@@ -31,7 +31,7 @@ public class employeedaotest {
    @Test
     @Order(3)
     public void update_employee_test(){
-        employeedaotest.testEmployee.setfName("Lorraine");
+        EmployeedaoTest.testEmployee.setfName("Lorraine");
         employeeDao.updateEmployee(testEmployee);
         Employee fetchedEmployee = employeeDao.getEmployee(testEmployee.geteId());
        System.out.println(fetchedEmployee);

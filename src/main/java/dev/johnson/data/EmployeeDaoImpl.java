@@ -17,7 +17,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public Employee createEmployee(Employee employee) {
     try {
     Connection conn = ConnectionUtil.createConnection();
-    String sql = "insert into employees values(default,?,?,?)";
+    String sql = "insert into employee values(default,?,?,?)";
     PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, employee.getfName());
             ps.setString(2, employee.getlName());
@@ -45,7 +45,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public Employee getEmployee(int eId) {
         try {
             Connection conn = ConnectionUtil.createConnection();
-            String sql = "select * from employees where eid = ?";
+            String sql = "select * from employee where eid = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1,eId);
             ResultSet rs = ps.executeQuery();
@@ -71,7 +71,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public List<Employee> getAllEmployees() {
         try {
             Connection conn = ConnectionUtil.createConnection();
-            String sql = "select * from employees";
+            String sql = "select * from employee";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
@@ -97,7 +97,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
         try {
             Connection conn = ConnectionUtil.createConnection();
-            String sql = "update employees set fname=?, lname=?, dpt=? where eid=?";
+            String sql = "update employee set fname=?, lname=?, dpt=? where eid=?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, employee.getfName());
             ps.setString(2, employee.getlName());
@@ -121,7 +121,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
         try{
             Connection conn = ConnectionUtil.createConnection();
-            String sql = "delete from employees where eid=?";
+            String sql = "delete from employee where eid=?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1,eId);
             ps.execute();

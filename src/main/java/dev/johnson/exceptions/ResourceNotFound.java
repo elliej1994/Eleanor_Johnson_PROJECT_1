@@ -2,7 +2,7 @@ package dev.johnson.exceptions;
 
 public class ResourceNotFound extends RuntimeException {
 
-    public ResourceNotFound (int id){
-        super("The resource with id "+id+" was not found.");
+    public ResourceNotFound (int eId){
+        super("The resource with id "+eId+" was not found.");
     }
 }

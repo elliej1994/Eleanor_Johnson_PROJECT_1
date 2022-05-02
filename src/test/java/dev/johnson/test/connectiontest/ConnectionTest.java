@@ -1,4 +1,4 @@
-package dev.johnson.connectiontest;
+package dev.johnson.test.connectiontest;
 
 import dev.johnson.utilities.ConnectionUtil;
 import org.junit.jupiter.api.Assertions;
