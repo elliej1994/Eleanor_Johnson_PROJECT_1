@@ -176,7 +176,7 @@ public class ExpenseManagementApp {
                     context.result("Cannot update finalized expense");
                     context.status(401);
                 }
-            }else if(retrievedExpense==null){
+            }else {
                 context.status(404);
                 context.result("There is no expense with that record number");
             }
@@ -282,7 +282,7 @@ public class ExpenseManagementApp {
         });
 
 
-    app.start(8080);
+    app.start(5000);
 
 
     }
