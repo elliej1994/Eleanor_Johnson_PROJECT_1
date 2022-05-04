@@ -12,13 +12,11 @@ public class Logger {
 
         String logMessage = level.name() + " " + message + " " + new Date() + "\n";
 
-        try {
-            Files.write(Paths.get("C:\\Users\\14102\\Documents\\GitHub\\eleanor_johnson_p1\\applogs.log"), logMessage.getBytes(StandardCharsets.UTF_8
-            ), StandardOpenOption.APPEND);
-        }catch(IOException e){
-            e.printStackTrace();
 
-        }
+            System.out.println("logging example");
+        /*    Files.write(Paths.get("C:\\Users\\14102\\Documents\\GitHub\\eleanor_johnson_p1\\applogs.log"), logMessage.getBytes(StandardCharsets.UTF_8
+            ), StandardOpenOption.APPEND);*/
+
     }
 
 }
